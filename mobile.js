@@ -110,8 +110,6 @@ function setIframeAttributesAndAddButton(iframe) {
 					await player.setVolume(0);
 					console.log("pause", iframe.id);
 				} else {
-					console.log(`${i}: play 시작`);
-					await player.play();
 					console.log(`${i}: setCurrentTime 시작`);
 					await player.setCurrentTime(0);
 					console.log(`${i}: setVolume 시작`);
