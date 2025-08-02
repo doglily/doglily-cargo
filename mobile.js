@@ -227,13 +227,6 @@ function observeStackedPageContents(stackedPage) {
 	const observer = new MutationObserver((mutations) => {
 		for (const { addedNodes } of mutations) {
 			for (const node of addedNodes) {
-				if (
-					node.nodeType === Node.ELEMENT_NODE &&
-					node.tagName === "MEDIA-ITEM"
-				) {
-					console.log("observeStackedPageContents");
-					handleMediaItem(node);
-				}
 				const nestedItems = node.querySelectorAll?.("media-item") || [];
 				for (const nested of nestedItems) {
 					handleMediaItem(nested);
