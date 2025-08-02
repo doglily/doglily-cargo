@@ -101,15 +101,7 @@ function setIframeAttributesAndAddButton(iframe) {
 			console.log("iframe.id", iframe.id, "id", id);
 
 			try {
-				if (iframe.id !== id) {
-					console.log(`${i}: setCurrentTime 시작`);
-					await player.setCurrentTime(0);
-					console.log(`${i}: pause 시작`);
-					await player.pause();
-					console.log(`${i}: setVolume 시작`);
-					await player.setVolume(0);
-					console.log("pause", iframe.id);
-				} else {
+				if (iframe.id === id) {
 					console.log(`${i}: setCurrentTime 시작`);
 					await player.setCurrentTime(0);
 					console.log(`${i}: setVolume 시작`);
@@ -123,7 +115,6 @@ function setIframeAttributesAndAddButton(iframe) {
 				}
 			} catch (error) {
 				console.error(`반복문 ${i}에서 에러 발생:`, error);
-				// 에러가 발생해도 계속 진행
 			}
 
 			console.log(`=== 반복문 끝 i=${i} ===`);
@@ -342,7 +333,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v3.16");
+		console.log("v3.17");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
