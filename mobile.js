@@ -231,11 +231,13 @@ function observeStackedPageContents(stackedPage) {
 					node.nodeType === Node.ELEMENT_NODE &&
 					node.tagName === "MEDIA-ITEM"
 				) {
+					console.log("observeStackedPageContents");
 					handleMediaItem(node);
 				}
 				const nestedItems = node.querySelectorAll?.("media-item") || [];
 				for (const nested of nestedItems) {
 					handleMediaItem(nested);
+					console.log("observeStackedPageContents nested");
 				}
 			}
 		}
