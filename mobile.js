@@ -163,9 +163,11 @@ function handleShadowRoot(shadowRoot) {
 	shadowRoot.__fullscreenHandled = true;
 	const processedIframes = new WeakSet();
 	function scanAndProcessIframes() {
+		console.log("handleShadowRoot scanAndProcessIframes");
 		const iframes = shadowRoot.querySelectorAll('iframe[id^="vimeo-player"]');
 		for (const iframe of iframes) {
 			if (!processedIframes.has(iframe)) {
+				console.log("handleShadowRoot scan");
 				setIframeAttributesAndAddButton(iframe);
 				processedIframes.add(iframe);
 			}
@@ -177,13 +179,16 @@ function handleShadowRoot(shadowRoot) {
 			clearInterval(intervalId);
 			return;
 		}
+		console.log("handleShadowRoot interval");
 		scanAndProcessIframes();
 	}, 1000);
 	const observer = new MutationObserver((mutations) => {
 		for (const { addedNodes } of mutations) {
 			for (const node of addedNodes) {
 				if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
+					console.log("handleShadowRoot observer");
 					if (!processedIframes.has(node)) {
+						console.log("handleShadowRoot observer set");
 						setIframeAttributesAndAddButton(node);
 						processedIframes.add(node);
 					}
