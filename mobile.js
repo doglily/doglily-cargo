@@ -345,7 +345,7 @@ function isIOS() {
 
 (() => {
 	function init() {
-		console.log("💡 doglily-cargo-mobile.js init!");
+		console.log("💡 doglily-cargo-mobile.js init!2");
 		addFullscreenDiv();
 		observeStackedPageContainers();
 	}
