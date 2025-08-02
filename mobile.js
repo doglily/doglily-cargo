@@ -82,7 +82,7 @@ function setIframeAttributesAndAddButton(iframe) {
 
 	const fullscreenBtn = createFullscreenButton();
 	fullscreenBtn.addEventListener("click", async () => {
-		const id = fullscreenUrl.toString().split("/video/")[1].split("?")[0];
+		const id = getVimeoIdFromSrc(fullscreenUrl.toString());
 		console.log("iframe id", id);
 		console.log("vimeoPlayers", vimeoPlayers);
 		console.log("vimeoPlayers.length", vimeoPlayers.length);
@@ -102,6 +102,9 @@ function setIframeAttributesAndAddButton(iframe) {
 
 			try {
 				if (iframe.id === id) {
+					const paused = await player.getPaused();
+					console.log(`${i}: play 시작`);
+					if (paused) await player.play();
 					console.log(`${i}: setCurrentTime 시작`);
 					await player.setCurrentTime(0);
 					console.log(`${i}: setVolume 시작`);
@@ -274,7 +277,7 @@ function getFullscreenDiv() {
 function addVimeoPlayerToFullscreenDiv(src, onReady) {
 	const div = getFullscreenDiv();
 	if (!div) return;
-	const id = src.split("/video/")[1].split("?")[0];
+	const id = getVimeoIdFromSrc(src);
 	if (document.getElementById(id)) {
 		vimeoPlayers.forEach(({ player, iframe }, i) => {
 			if (iframe.id === id) {
@@ -336,7 +339,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v4.0");
+		console.log("v4.1");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
@@ -345,3 +348,7 @@ function isIOS() {
 		init();
 	}
 })();
+
+function getVimeoIdFromSrc(src) {
+	return src.split("/video/")[1].split("?")[0];
+}
