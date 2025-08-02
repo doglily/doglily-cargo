@@ -175,14 +175,16 @@ function handleShadowRoot(shadowRoot) {
 	const intervalId = setInterval(() => {
 		if (!document.body.contains(shadowRoot.host)) {
 			clearInterval(intervalId);
+			scanAndProcessIframes();
+			console.log("handleShadowRoot interval");
 			return;
 		}
-		scanAndProcessIframes();
 	}, 1000);
 	const observer = new MutationObserver((mutations) => {
 		for (const { addedNodes } of mutations) {
 			for (const node of addedNodes) {
 				if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
+					console.log("handleShadowRoot observer");
 					if (!processedIframes.has(node)) {
 						setIframeAttributesAndAddButton(node);
 						processedIframes.add(node);
@@ -203,21 +205,8 @@ function handleMediaItem(item) {
 		}
 		return false;
 	};
-	if (tryAttach()) return;
-	const interval = setInterval(() => {
-		console.log("handleMediaItem interval");
-		if (tryAttach()) {
-			clearInterval(interval);
-		}
-	}, 100);
+	tryAttach();
 }
-
-document.addEventListener("fullscreenchange", () => {
-	const isFullscreen = !!document.fullscreenElement;
-	if (!isFullscreen) {
-		hideAllVimeoPlayerInFullscreenDiv();
-	}
-});
 
 // stacked-page 내부 감시
 function observeStackedPageContents(stackedPage) {
@@ -323,6 +312,13 @@ function hideAllVimeoPlayerInFullscreenDiv() {
 		player.pause();
 	}
 }
+
+document.addEventListener("fullscreenchange", () => {
+	const isFullscreen = !!document.fullscreenElement;
+	if (!isFullscreen) {
+		hideAllVimeoPlayerInFullscreenDiv();
+	}
+});
 
 function showVimeoPlayerInFullscreenDiv(id) {
 	const div = getFullscreenDiv();
