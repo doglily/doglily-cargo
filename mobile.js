@@ -98,20 +98,10 @@ function setIframeAttributesAndAddButton(iframe) {
 
 			const { player, iframe } = vimeoPlayers[i];
 
-			if (!player || !iframe) {
-				console.log(
-					`player 또는 iframe이 없습니다. player:`,
-					!!player,
-					`iframe:`,
-					!!iframe,
-				);
-				continue;
-			}
-
 			console.log("iframe.id", iframe.id, "id", id);
 
 			try {
-				if (iframe.id === id) {
+				if (iframe.id !== id) {
 					console.log(`${i}: setCurrentTime 시작`);
 					await player.setCurrentTime(0);
 					console.log(`${i}: pause 시작`);
@@ -121,35 +111,13 @@ function setIframeAttributesAndAddButton(iframe) {
 					console.log("pause", iframe.id);
 				} else {
 					console.log(`${i}: play 시작`);
-					try {
-						// 타임아웃을 추가하여 무한 대기 방지
-						await Promise.race([
-							player.play(),
-							new Promise((_, reject) =>
-								setTimeout(() => reject(new Error("play timeout")), 3000),
-							),
-						]);
-					} catch (playError) {
-						console.warn(`${i}: play 실패, 계속 진행:`, playError.message);
-					}
+					await player.play();
 					console.log(`${i}: setCurrentTime 시작`);
 					await player.setCurrentTime(0);
 					console.log(`${i}: setVolume 시작`);
 					await player.setVolume(0.75);
 					console.log(`${i}: requestFullscreen 시작`);
-					try {
-						await Promise.race([
-							player.requestFullscreen(),
-							new Promise((_, reject) =>
-								setTimeout(() => reject(new Error("fullscreen timeout")), 2000),
-							),
-						]);
-					} catch (fullscreenError) {
-						console.warn(
-							`${i}: requestFullscreen 실패, 계속 진행:`,
-							fullscreenError.message,
-						);
-					}
+					await player.requestFullscreen();
 					console.log("fullscreen", iframe.id);
 					console.log(`${i}: showVimeoPlayerInFullscreenDiv 시작`);
 					showVimeoPlayerInFullscreenDiv(id);
@@ -376,7 +344,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v3.14");
+		console.log("v3.15");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
