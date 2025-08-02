@@ -172,18 +172,12 @@ function handleShadowRoot(shadowRoot) {
 		}
 	}
 	scanAndProcessIframes();
-	// const intervalId = setInterval(() => {
-	// 	if (!document.body.contains(shadowRoot.host)) {
-	// 		clearInterval(intervalId);
-	// 		return;
-	// 	}
-	// 	scanAndProcessIframes();
-	// }, 1000);
 	const observer = new MutationObserver((mutations) => {
 		for (const { addedNodes } of mutations) {
 			for (const node of addedNodes) {
 				if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
 					if (!processedIframes.has(node)) {
+						console.log("handleShadowRoot observer set");
 						setIframeAttributesAndAddButton(node);
 						processedIframes.add(node);
 					}
