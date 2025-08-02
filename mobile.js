@@ -274,17 +274,18 @@ function getFullscreenDiv() {
 function addVimeoPlayerToFullscreenDiv(src, onReady) {
 	const div = getFullscreenDiv();
 	if (!div) return;
-	if (document.getElementById(src)) {
+	const id = src.split("/video/")[1].split("?")[0];
+	if (document.getElementById(id)) {
 		vimeoPlayers.forEach(({ player, iframe }, i) => {
-			if (iframe.id === src) {
+			if (iframe.id === id) {
 				player.destroy();
 				vimeoPlayers.splice(i, 1);
 			}
 		});
-		document.getElementById(src)?.remove();
+		document.getElementById(id)?.remove();
 	}
 	const iframe = document.createElement("iframe");
-	iframe.id = src.split("/video/")[1].split("?")[0];
+	iframe.id = id;
 	iframe.src = src;
 	iframe.style.position = "absolute";
 	iframe.style.top = "0";
@@ -335,7 +336,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v3.18");
+		console.log("v4.0");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
