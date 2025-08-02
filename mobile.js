@@ -322,7 +322,6 @@ function showVimeoPlayerInFullscreenDiv(id) {
 	if (!div) return;
 	const iframe = document.getElementById(id);
 	if (iframe) {
-		if (isIOS()) return;
 		iframe.style.visibility = "visible";
 	}
 }
