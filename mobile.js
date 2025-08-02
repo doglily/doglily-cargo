@@ -203,8 +203,21 @@ function handleMediaItem(item) {
 		}
 		return false;
 	};
-	tryAttach();
+	if (tryAttach()) return;
+	const interval = setInterval(() => {
+		console.log("handleMediaItem interval");
+		if (tryAttach()) {
+			clearInterval(interval);
+		}
+	}, 100);
 }
+
+document.addEventListener("fullscreenchange", () => {
+	const isFullscreen = !!document.fullscreenElement;
+	if (!isFullscreen) {
+		hideAllVimeoPlayerInFullscreenDiv();
+	}
+});
 
 // stacked-page 내부 감시
 function observeStackedPageContents(stackedPage) {
@@ -310,13 +323,6 @@ function hideAllVimeoPlayerInFullscreenDiv() {
 		player.pause();
 	}
 }
-
-document.addEventListener("fullscreenchange", () => {
-	const isFullscreen = !!document.fullscreenElement;
-	if (!isFullscreen) {
-		hideAllVimeoPlayerInFullscreenDiv();
-	}
-});
 
 function showVimeoPlayerInFullscreenDiv(id) {
 	const div = getFullscreenDiv();
