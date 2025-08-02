@@ -175,16 +175,14 @@ function handleShadowRoot(shadowRoot) {
 	const intervalId = setInterval(() => {
 		if (!document.body.contains(shadowRoot.host)) {
 			clearInterval(intervalId);
-			scanAndProcessIframes();
-			console.log("handleShadowRoot interval");
 			return;
 		}
+		scanAndProcessIframes();
 	}, 1000);
 	const observer = new MutationObserver((mutations) => {
 		for (const { addedNodes } of mutations) {
 			for (const node of addedNodes) {
 				if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
-					console.log("handleShadowRoot observer");
 					if (!processedIframes.has(node)) {
 						setIframeAttributesAndAddButton(node);
 						processedIframes.add(node);
