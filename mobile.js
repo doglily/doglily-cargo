@@ -85,7 +85,9 @@ function setIframeAttributesAndAddButton(iframe) {
 		const id = fullscreenUrl.toString().split("/video/")[1].split("?")[0];
 		console.log("iframe id", id);
 		console.log("vimeoPlayers", vimeoPlayers);
+		console.log("vimeoPlayers.length", vimeoPlayers.length);
 		for (let i = 0; i < vimeoPlayers.length; i++) {
+			console.log(`vimeoPlayers[${i}].iframe.id`, vimeoPlayers[i].iframe.id);
 			const { player, iframe } = vimeoPlayers[i];
 			console.log("iframe.id", iframe.id, "id", id);
 			if (iframe.id === id) {
@@ -316,7 +318,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v3.9");
+		console.log("v3.10");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
