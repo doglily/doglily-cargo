@@ -82,27 +82,18 @@ function setIframeAttributesAndAddButton(iframe) {
 
 	const fullscreenBtn = createFullscreenButton();
 	fullscreenBtn.addEventListener("click", async () => {
-		showVimeoPlayerInFullscreenDiv(fullscreenUrl.toString());
 		const id = fullscreenUrl.toString();
 		for (const { player, iframe } of vimeoPlayers) {
 			if (iframe.id !== id) {
 				await player.setCurrentTime(0);
 				await player.pause();
 			} else {
-				if (isIOS()) {
-					await player.setCurrentTime(0);
-					await player.play();
-					await player.setMuted(false);
-					await player.requestFullscreen();
-					return;
-				}
-				player.requestFullscreen().then(() => {
-					player.setCurrentTime(0).then(() => {
-						player.setVolume(0.75).then(async () => {
-							await player.play();
-						});
-					});
-				});
+				await player.setCurrentTime(0);
+				await player.setMuted(false);
+				await player.setVolume(0.75);
+				await player.requestFullscreen();
+				await player.play();
+				showVimeoPlayerInFullscreenDiv(fullscreenUrl.toString());
 			}
 		}
 	});
