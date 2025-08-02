@@ -337,16 +337,28 @@ function showVimeoPlayerInFullscreenDiv(id) {
 	}
 }
 
-// 진입점
 
-document.addEventListener("DOMContentLoaded", () => {
-	console.log('doglily-cargo-moblie')
-	addFullscreenDiv();
-	observeStackedPageContainers();
-});
-
-const vimeoPlayers = [];
-
-function isIOS() {
-	return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-}
+(function () {
+	const vimeoPlayers = [];
+  
+	function isIOS() {
+	  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+	}
+  
+	function init() {
+	  console.log('💡 doglily-cargo-mobile.js init!');
+	  addFullscreenDiv();
+	  observeStackedPageContainers();
+	}
+  
+	// DOMContentLoaded가 이미 끝났으면 바로 실행
+	if (document.readyState === 'loading') {
+	  document.addEventListener('DOMContentLoaded', init);
+	} else {
+	  init();
+	}
+  
+	// 필요한 경우 전역에 등록
+	window.vimeoPlayers = vimeoPlayers;
+  })();
+  
