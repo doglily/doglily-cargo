@@ -112,17 +112,26 @@ function setIframeAttributesAndAddButton(iframe) {
 
 			try {
 				if (iframe.id === id) {
+					console.log(`${i}: setCurrentTime 시작`);
 					await player.setCurrentTime(0);
+					console.log(`${i}: pause 시작`);
 					await player.pause();
+					console.log(`${i}: setVolume 시작`);
 					await player.setVolume(0);
 					console.log("pause", iframe.id);
 				} else {
+					console.log(`${i}: play 시작`);
 					await player.play();
+					console.log(`${i}: setCurrentTime 시작`);
 					await player.setCurrentTime(0);
+					console.log(`${i}: setVolume 시작`);
 					await player.setVolume(0.75);
+					console.log(`${i}: requestFullscreen 시작`);
 					await player.requestFullscreen();
 					console.log("fullscreen", iframe.id);
+					console.log(`${i}: showVimeoPlayerInFullscreenDiv 시작`);
 					showVimeoPlayerInFullscreenDiv(id);
+					console.log(`${i}: showVimeoPlayerInFullscreenDiv 완료`);
 				}
 			} catch (error) {
 				console.error(`반복문 ${i}에서 에러 발생:`, error);
@@ -345,7 +354,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v3.12");
+		console.log("v3.13");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
