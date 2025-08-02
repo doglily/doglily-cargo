@@ -87,22 +87,49 @@ function setIframeAttributesAndAddButton(iframe) {
 		console.log("vimeoPlayers", vimeoPlayers);
 		console.log("vimeoPlayers.length", vimeoPlayers.length);
 		for (let i = 0; i < vimeoPlayers.length; i++) {
-			console.log(`vimeoPlayers[${i}].iframe.id`, vimeoPlayers[i].iframe.id);
-			const { player, iframe } = vimeoPlayers[i];
-			console.log("iframe.id", iframe.id, "id", id);
-			if (iframe.id === id) {
-				await player.setCurrentTime(0);
-				await player.pause();
-				await player.setVolume(0);
-				console.log("pause", iframe.id);
-			} else {
-				await player.play();
-				await player.setCurrentTime(0);
-				await player.setVolume(0.75);
-				player.requestFullscreen();
-				console.log("fullscreen", iframe.id);
-				showVimeoPlayerInFullscreenDiv(id);
+			console.log(`=== 반복문 시작 i=${i} ===`);
+			console.log(`vimeoPlayers[${i}].iframe.id`, vimeoPlayers[i]?.iframe?.id);
+
+			// null 체크 추가
+			if (!vimeoPlayers[i]) {
+				console.log(`vimeoPlayers[${i}]가 null/undefined입니다`);
+				continue;
 			}
+
+			const { player, iframe } = vimeoPlayers[i];
+
+			if (!player || !iframe) {
+				console.log(
+					`player 또는 iframe이 없습니다. player:`,
+					!!player,
+					`iframe:`,
+					!!iframe,
+				);
+				continue;
+			}
+
+			console.log("iframe.id", iframe.id, "id", id);
+
+			try {
+				if (iframe.id === id) {
+					await player.setCurrentTime(0);
+					await player.pause();
+					await player.setVolume(0);
+					console.log("pause", iframe.id);
+				} else {
+					await player.play();
+					await player.setCurrentTime(0);
+					await player.setVolume(0.75);
+					await player.requestFullscreen();
+					console.log("fullscreen", iframe.id);
+					showVimeoPlayerInFullscreenDiv(id);
+				}
+			} catch (error) {
+				console.error(`반복문 ${i}에서 에러 발생:`, error);
+				// 에러가 발생해도 계속 진행
+			}
+
+			console.log(`=== 반복문 끝 i=${i} ===`);
 		}
 	});
 	fullscreenBtn.classList.add("vimeo-enhance-fullscreen");
@@ -318,7 +345,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v3.11");
+		console.log("v3.12");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
