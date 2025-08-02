@@ -81,41 +81,26 @@ function setIframeAttributesAndAddButton(iframe) {
 	if (existingBtn) existingBtn.remove();
 
 	const fullscreenBtn = createFullscreenButton();
-	fullscreenBtn.addEventListener("click", () => {
+	fullscreenBtn.addEventListener("click", async () => {
 		showVimeoPlayerInFullscreenDiv(fullscreenUrl.toString());
 		const id = fullscreenUrl.toString();
 		for (const { player, iframe } of vimeoPlayers) {
 			if (iframe.id !== id) {
-				player.setCurrentTime(0);
-				player.pause();
+				await player.setCurrentTime(0);
+				await player.pause();
 			} else {
 				if (isIOS()) {
-					player.setCurrentTime(0);
-					player.play();
-					player.setMuted(false);
-					player.requestFullscreen();
+					await player.setCurrentTime(0);
+					await player.play();
+					await player.setMuted(false);
+					await player.requestFullscreen();
 					return;
 				}
 				player.requestFullscreen().then(() => {
 					player.setCurrentTime(0).then(() => {
-						player.setVolume(0.75).then(() => {
-							player.play();
+						player.setVolume(0.75).then(async () => {
+							await player.play();
 						});
-						setTimeout(() => {
-							player.setVolume(0.75).then(() => {
-								player.play();
-							});
-						}, 300);
-						setTimeout(() => {
-							player.setVolume(0.75).then(() => {
-								player.play();
-							});
-						}, 1000);
-						setTimeout(() => {
-							player.setVolume(0.75).then(() => {
-								player.play();
-							});
-						}, 500);
 					});
 				});
 			}
@@ -177,7 +162,6 @@ function handleShadowRoot(shadowRoot) {
 			for (const node of addedNodes) {
 				if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
 					if (!processedIframes.has(node)) {
-						console.log("handleShadowRoot observer set");
 						setIframeAttributesAndAddButton(node);
 						processedIframes.add(node);
 					}
@@ -199,7 +183,6 @@ function handleMediaItem(item) {
 	};
 	if (tryAttach()) return;
 	const interval = setInterval(() => {
-		console.log("handleMediaItem interval");
 		if (tryAttach()) {
 			clearInterval(interval);
 		}
@@ -225,7 +208,6 @@ function observeStackedPageContents(stackedPage) {
 				const nestedItems = node.querySelectorAll?.("media-item") || [];
 				for (const nested of nestedItems) {
 					handleMediaItem(nested);
-					console.log("observeStackedPageContents nested");
 				}
 			}
 		}
@@ -248,7 +230,6 @@ function observeStackedPageContainers() {
 					node.classList.contains("page") &&
 					node.classList.contains("stacked-page")
 				) {
-					console.log("observeStackedPageContainers");
 					observeStackedPageContents(node);
 				}
 			}
@@ -336,7 +317,6 @@ function isIOS() {
 
 (() => {
 	function init() {
-		console.log("💡 doglily-cargo-mobile.js init!2");
 		addFullscreenDiv();
 		observeStackedPageContainers();
 	}
