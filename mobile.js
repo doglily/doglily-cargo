@@ -205,6 +205,7 @@ function handleMediaItem(item) {
 	};
 	if (tryAttach()) return;
 	const interval = setInterval(() => {
+		console.log("handleMediaItem interval");
 		if (tryAttach()) {
 			clearInterval(interval);
 		}
