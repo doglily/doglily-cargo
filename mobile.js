@@ -87,12 +87,11 @@ function setIframeAttributesAndAddButton(iframe) {
 			if (iframe.id !== id) {
 				await player.setCurrentTime(0);
 				await player.pause();
+				await player.setVolume(0);
 			} else {
-				await player.setCurrentTime(0);
-				await player.setMuted(false);
+				await player.play();
 				await player.setVolume(0.75);
 				await player.requestFullscreen();
-				await player.play();
 				showVimeoPlayerInFullscreenDiv(fullscreenUrl.toString());
 			}
 		}
@@ -310,7 +309,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v1");
+		console.log("v2");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
