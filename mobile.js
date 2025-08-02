@@ -172,26 +172,26 @@ function handleShadowRoot(shadowRoot) {
 		}
 	}
 	scanAndProcessIframes();
-	// const intervalId = setInterval(() => {
-	// 	if (!document.body.contains(shadowRoot.host)) {
-	// 		clearInterval(intervalId);
-	// 		return;
-	// 	}
-	// 	scanAndProcessIframes();
-	// }, 1000);
-	// const observer = new MutationObserver((mutations) => {
-	// 	for (const { addedNodes } of mutations) {
-	// 		for (const node of addedNodes) {
-	// 			if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
-	// 				if (!processedIframes.has(node)) {
-	// 					setIframeAttributesAndAddButton(node);
-	// 					processedIframes.add(node);
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// });
-	// observer.observe(shadowRoot, { childList: true, subtree: true });
+	const intervalId = setInterval(() => {
+		if (!document.body.contains(shadowRoot.host)) {
+			clearInterval(intervalId);
+			return;
+		}
+		scanAndProcessIframes();
+	}, 1000);
+	const observer = new MutationObserver((mutations) => {
+		for (const { addedNodes } of mutations) {
+			for (const node of addedNodes) {
+				if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
+					if (!processedIframes.has(node)) {
+						setIframeAttributesAndAddButton(node);
+						processedIframes.add(node);
+					}
+				}
+			}
+		}
+	});
+	observer.observe(shadowRoot, { childList: true, subtree: true });
 }
 
 // media-item 처리
@@ -204,11 +204,11 @@ function handleMediaItem(item) {
 		return false;
 	};
 	if (tryAttach()) return;
-	// const interval = setInterval(() => {
-	// 	if (tryAttach()) {
-	// 		clearInterval(interval);
-	// 	}
-	// }, 100);
+	const interval = setInterval(() => {
+		if (tryAttach()) {
+			clearInterval(interval);
+		}
+	}, 100);
 }
 
 document.addEventListener("fullscreenchange", () => {
@@ -224,23 +224,23 @@ function observeStackedPageContents(stackedPage) {
 	for (const item of initialItems) {
 		handleMediaItem(item);
 	}
-	// const observer = new MutationObserver((mutations) => {
-	// 	for (const { addedNodes } of mutations) {
-	// 		for (const node of addedNodes) {
-	// 			if (
-	// 				node.nodeType === Node.ELEMENT_NODE &&
-	// 				node.tagName === "MEDIA-ITEM"
-	// 			) {
-	// 				handleMediaItem(node);
-	// 			}
-	// 			const nestedItems = node.querySelectorAll?.("media-item") || [];
-	// 			for (const nested of nestedItems) {
-	// 				handleMediaItem(nested);
-	// 			}
-	// 		}
-	// 	}
-	// });
-	// observer.observe(stackedPage, { childList: true, subtree: true });
+	const observer = new MutationObserver((mutations) => {
+		for (const { addedNodes } of mutations) {
+			for (const node of addedNodes) {
+				if (
+					node.nodeType === Node.ELEMENT_NODE &&
+					node.tagName === "MEDIA-ITEM"
+				) {
+					handleMediaItem(node);
+				}
+				const nestedItems = node.querySelectorAll?.("media-item") || [];
+				for (const nested of nestedItems) {
+					handleMediaItem(nested);
+				}
+			}
+		}
+	});
+	observer.observe(stackedPage, { childList: true, subtree: true });
 }
 
 // 전체 페이지 감시
