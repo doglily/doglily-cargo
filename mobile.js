@@ -258,6 +258,7 @@ function observeStackedPageContainers() {
 					node.classList.contains("page") &&
 					node.classList.contains("stacked-page")
 				) {
+					console.log("observeStackedPageContainers");
 					observeStackedPageContents(node);
 				}
 			}
