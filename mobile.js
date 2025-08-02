@@ -121,13 +121,35 @@ function setIframeAttributesAndAddButton(iframe) {
 					console.log("pause", iframe.id);
 				} else {
 					console.log(`${i}: play 시작`);
-					await player.play();
+					try {
+						// 타임아웃을 추가하여 무한 대기 방지
+						await Promise.race([
+							player.play(),
+							new Promise((_, reject) =>
+								setTimeout(() => reject(new Error("play timeout")), 3000),
+							),
+						]);
+					} catch (playError) {
+						console.warn(`${i}: play 실패, 계속 진행:`, playError.message);
+					}
 					console.log(`${i}: setCurrentTime 시작`);
 					await player.setCurrentTime(0);
 					console.log(`${i}: setVolume 시작`);
 					await player.setVolume(0.75);
 					console.log(`${i}: requestFullscreen 시작`);
-					await player.requestFullscreen();
+					try {
+						await Promise.race([
+							player.requestFullscreen(),
+							new Promise((_, reject) =>
+								setTimeout(() => reject(new Error("fullscreen timeout")), 2000),
+							),
+						]);
+					} catch (fullscreenError) {
+						console.warn(
+							`${i}: requestFullscreen 실패, 계속 진행:`,
+							fullscreenError.message,
+						);
+					}
 					console.log("fullscreen", iframe.id);
 					console.log(`${i}: showVimeoPlayerInFullscreenDiv 시작`);
 					showVimeoPlayerInFullscreenDiv(id);
@@ -354,7 +376,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v3.13");
+		console.log("v3.14");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
