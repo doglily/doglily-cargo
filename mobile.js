@@ -165,7 +165,6 @@ function handleShadowRoot(shadowRoot) {
 	shadowRoot.__fullscreenHandled = true;
 	const processedIframes = new WeakSet();
 	function scanAndProcessIframes() {
-		console.log("scanAndProcessIframes");
 		const iframes = shadowRoot.querySelectorAll('iframe[id^="vimeo-player"]');
 		for (const iframe of iframes) {
 			if (!processedIframes.has(iframe)) {
@@ -179,7 +178,6 @@ function handleShadowRoot(shadowRoot) {
 		for (const { addedNodes } of mutations) {
 			for (const node of addedNodes) {
 				if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
-					console.log("node", node);
 					if (!processedIframes.has(node)) {
 						setIframeAttributesAndAddButton(node);
 						processedIframes.add(node);
