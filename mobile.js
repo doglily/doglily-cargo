@@ -340,6 +340,7 @@ function showVimeoPlayerInFullscreenDiv(id) {
 // 진입점
 
 document.addEventListener("DOMContentLoaded", () => {
+	console.log('doglily-cargo-moblie')
 	addFullscreenDiv();
 	observeStackedPageContainers();
 });
