@@ -96,6 +96,7 @@ async function setIframeAttributesAndAddButtonMac(iframe) {
 	const url = new URL(src);
 	url.searchParams.set("controls", "0");
 	url.searchParams.set("autoplay", "0");
+	iframe.style.display = "block";
 	iframe.onload = () => {
 		iframe.onload = null;
 
@@ -107,6 +108,7 @@ async function setIframeAttributesAndAddButtonMac(iframe) {
 
 		const fullscreenBtn = createFullscreenButton();
 		fullscreenBtn.addEventListener("click", async (event) => {
+			iframe.style.display = "block";
 			if (isIOS()) {
 				const player = new Vimeo.Player(iframe);
 				await player.ready();
@@ -186,14 +188,13 @@ async function setIframeAttributesAndAddButtonMac(iframe) {
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
 }
 async function setIframeAttributesAndAddButtonWin(iframe) {
-	iframe.style.display = "block";
 	const src = await waitForIframeSrc(iframe);
 	if (!src?.startsWith("https://player.vimeo.com")) return;
+	const url = new URL(src);
+	url.searchParams.set("controls", "0");
+	url.searchParams.set("autoplay", "0");
 	iframe.onload = () => {
 		iframe.onload = null;
-		const url = new URL(src);
-		url.searchParams.set("controls", "0");
-		url.searchParams.set("autoplay", "0");
 
 		const wrapper = iframe.parentElement?.parentElement;
 		if (!wrapper) return;
@@ -421,6 +422,7 @@ function addVimeoPlayerToFullscreenDiv(src) {
 		iframe.style.opacity = "0";
 	}
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
+	iframe.style.display = "block";
 	div.appendChild(iframe);
 	const player = new Vimeo.Player(iframe);
 	return { player, iframe };
