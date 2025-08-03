@@ -28,11 +28,25 @@ function createFullscreenButton() {
         </svg>
     `)}`;
 
+	const loadingIcon = `data:image/svg+xml;base64,${btoa(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-icon lucide-loader"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
+    `)}`;
+
 	const iconImg = document.createElement("img");
 	iconImg.src = enterIcon;
 	iconImg.alt = "fullscreen icon";
 	iconImg.style.width = "20px";
 	iconImg.style.height = "20px";
+
+	const changeIcon = (type) => {
+		if (type === "enter") {
+			iconImg.src = enterIcon;
+		} else if (type === "exit") {
+			iconImg.src = exitIcon;
+		} else if (type === "loading") {
+			iconImg.src = loadingIcon;
+		}
+	};
 
 	btn.appendChild(iconImg);
 	applyStyles(btn, {
@@ -55,6 +69,8 @@ function createFullscreenButton() {
 	btn._iconEnter = enterIcon;
 	btn._iconExit = exitIcon;
 	btn._iconImg = iconImg;
+	btn._loadingIcon = loadingIcon;
+	btn._changeIcon = changeIcon;
 	return btn;
 }
 
@@ -83,6 +99,7 @@ function setIframeAttributesAndAddButton(iframe) {
 	const fullscreenBtn = createFullscreenButton();
 	fullscreenBtn.addEventListener("click", async () => {
 		try {
+			fullscreenBtn._changeIcon("loading");
 			const { player, iframe } = addVimeoPlayerToFullscreenDiv(src);
 
 			const paused = await player.getPaused();
@@ -290,7 +307,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.6");
+		console.log("v5.7");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
