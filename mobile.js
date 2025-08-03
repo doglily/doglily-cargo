@@ -90,7 +90,7 @@ async function waitForIframeSrc(iframe, maxTries = 2000, interval = 100) {
 // iframe에 버튼 붙이기
 async function setIframeAttributesAndAddButton(iframe) {
 	const src = await waitForIframeSrc(iframe);
-	if (!src?.startsWith("https://player.vimeo.c m")) return;
+	if (!src?.startsWith("https://player.vimeo.com")) return;
 
 	iframe.onload = () => {
 		iframe.onload = null;
