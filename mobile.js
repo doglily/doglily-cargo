@@ -29,7 +29,7 @@ function createFullscreenButton() {
     `)}`;
 
 	const loadingIcon = `data:image/svg+xml;base64,${btoa(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-icon lucide-loader"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
+     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hourglass-icon lucide-hourglass"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
     `)}`;
 
 	const iconImg = document.createElement("img");
@@ -41,13 +41,10 @@ function createFullscreenButton() {
 	const changeIcon = (type) => {
 		if (type === "enter") {
 			iconImg.src = enterIcon;
-			iconImg.classList.remove("spinning-icon");
 		} else if (type === "exit") {
 			iconImg.src = exitIcon;
-			iconImg.classList.remove("spinning-icon");
 		} else if (type === "loading") {
 			iconImg.src = loadingIcon;
-			iconImg.classList.add("spinning-icon");
 		}
 	};
 
@@ -310,7 +307,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.10");
+		console.log("v5.11");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
