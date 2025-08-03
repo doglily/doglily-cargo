@@ -94,10 +94,9 @@ async function setIframeAttributesAndAddButton(iframe) {
 	const url = new URL(src);
 	url.searchParams.set("controls", "0");
 	url.searchParams.set("autoplay", "0");
+
 	iframe.setAttribute("src", url.toString());
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
-
-	console.log("iframe readyState:", iframe.contentDocument?.readyState);
 
 	const wrapper = iframe.parentElement?.parentElement;
 	if (!wrapper) return;
@@ -108,7 +107,13 @@ async function setIframeAttributesAndAddButton(iframe) {
 	const fullscreenBtn = createFullscreenButton();
 	fullscreenBtn.addEventListener("click", async (event) => {
 		if (isIOS()) {
-			const player = new Vimeo.Player(iframe);
+			const div = getFullscreenDiv();
+			if (!div) return;
+			const newIframe = document.createElement("iframe");
+			newIframe.id = iframe.id;
+			newIframe.src = iframe.src;
+			div.appendChild(newIframe);
+			const player = new Vimeo.Player(newIframe);
 			await player.ready();
 			const paused = await player.getPaused();
 			if (paused) await player.play();
@@ -336,7 +341,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.22");
+		console.log("v5.28");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
