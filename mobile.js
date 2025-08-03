@@ -115,6 +115,7 @@ function setIframeAttributesAndAddButton(iframe) {
 			await player.requestFullscreen();
 			if (!isIOS()) {
 				iframe.style.opacity = "1";
+				iframe.style.pointerEvents = "auto";
 			}
 		} catch (error) {
 			console.error(`에러 발생:`, error);
@@ -281,7 +282,7 @@ function addVimeoPlayerToFullscreenDiv(src) {
 	iframe.width = "100%";
 	iframe.height = "100%";
 	iframe.frameBorder = "0";
-	iframe.style.pointerEvents = "auto";
+	iframe.style.pointerEvents = "none";
 	if (isIOS()) {
 		iframe.style.visibility = "hidden";
 	} else {
