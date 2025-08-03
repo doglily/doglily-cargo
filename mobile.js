@@ -97,6 +97,8 @@ async function setIframeAttributesAndAddButton(iframe) {
 	iframe.setAttribute("src", url.toString());
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
 
+	console.log("iframe readyState:", iframe.contentDocument?.readyState);
+
 	const wrapper = iframe.parentElement?.parentElement;
 	if (!wrapper) return;
 
@@ -106,16 +108,12 @@ async function setIframeAttributesAndAddButton(iframe) {
 	const fullscreenBtn = createFullscreenButton();
 	fullscreenBtn.addEventListener("click", async (event) => {
 		if (isIOS()) {
-			iframe.setAttribute("src", url.toString());
-			iframe.addEventListener("load", async () => {
-				const player = new Vimeo.Player(iframe);
-				await player.ready();
-				const paused = await player.getPaused();
-				if (paused) await player.play();
-				await player.setVolume(0.75);
-				await player.requestFullscreen();
-				// 여기서 버튼 추가 로직 실행
-			});
+			const player = new Vimeo.Player(iframe);
+			await player.ready();
+			const paused = await player.getPaused();
+			if (paused) await player.play();
+			await player.setVolume(0.75);
+			await player.requestFullscreen();
 			return;
 		}
 		// 기본 동작 방지 및 스크롤 위치 저장
