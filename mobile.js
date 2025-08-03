@@ -54,7 +54,7 @@ function createFullscreenButton() {
 		position: "absolute",
 		bottom: "10px",
 		right: "10px",
-		backgroundColor: "rgba(0, 0, 0, 0.4)",
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
 		borderRadius: "4px",
 		padding: "7px",
 		cursor: "pointer",
@@ -94,9 +94,8 @@ function setIframeAttributesAndAddButton(iframe) {
 	const wrapper = iframe.parentElement?.parentElement;
 	if (!wrapper) return;
 
-	// 중복 방지: 이미 버튼이 존재하는지 확인
-	const existingBtn = wrapper.querySelector(".vimeo-enhance-fullscreen");
-	if (existingBtn) existingBtn.remove();
+	const existingBtns = wrapper.querySelectorAll(".vimeo-enhance-fullscreen");
+	existingBtns.forEach((btn) => btn.remove());
 
 	const fullscreenBtn = createFullscreenButton();
 	fullscreenBtn.addEventListener("click", async (event) => {
@@ -337,7 +336,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.16");
+		console.log("v5.17");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
