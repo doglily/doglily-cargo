@@ -82,46 +82,24 @@ function setIframeAttributesAndAddButton(iframe) {
 
 	const fullscreenBtn = createFullscreenButton();
 	fullscreenBtn.addEventListener("click", async () => {
-		const id = getVimeoIdFromSrc(fullscreenUrl.toString());
-		console.log("iframe id", id);
-		console.log("vimeoPlayers", vimeoPlayers);
-		console.log("vimeoPlayers.length", vimeoPlayers.length);
-		for (let i = 0; i < vimeoPlayers.length; i++) {
-			console.log(`=== 반복문 시작 i=${i} ===`);
-			console.log(`vimeoPlayers[${i}].iframe.id`, vimeoPlayers[i]?.iframe?.id);
-
-			// null 체크 추가
-			if (!vimeoPlayers[i]) {
-				console.log(`vimeoPlayers[${i}]가 null/undefined입니다`);
-				continue;
+		try {
+			if (iframe.id === id) {
+				const { player } = addVimeoPlayerToFullscreenDiv(src);
+				const paused = await player.getPaused();
+				console.log(`${i}: play 시작`);
+				if (paused) await player.play();
+				console.log(`${i}: setCurrentTime 시작`);
+				await player.setCurrentTime(0);
+				console.log(`${i}: setVolume 시작`);
+				await player.setVolume(0.75);
+				console.log(`${i}: requestFullscreen 시작`);
+				await player.requestFullscreen();
 			}
-
-			const { player, iframe } = vimeoPlayers[i];
-
-			console.log("iframe.id", iframe.id, "id", id);
-
-			try {
-				if (iframe.id === id) {
-					const paused = await player.getPaused();
-					console.log(`${i}: play 시작`);
-					if (paused) await player.play();
-					console.log(`${i}: setCurrentTime 시작`);
-					await player.setCurrentTime(0);
-					console.log(`${i}: setVolume 시작`);
-					await player.setVolume(0.75);
-					console.log(`${i}: requestFullscreen 시작`);
-					await player.requestFullscreen();
-					console.log("fullscreen", iframe.id);
-					console.log(`${i}: showVimeoPlayerInFullscreenDiv 시작`);
-					showVimeoPlayerInFullscreenDiv(id);
-					console.log(`${i}: showVimeoPlayerInFullscreenDiv 완료`);
-				}
-			} catch (error) {
-				console.error(`반복문 ${i}에서 에러 발생:`, error);
-			}
-
-			console.log(`=== 반복문 끝 i=${i} ===`);
+		} catch (error) {
+			console.error(`반복문 ${i}에서 에러 발생:`, error);
 		}
+
+		console.log(`=== 반복문 끝 i=${i} ===`);
 	});
 	fullscreenBtn.classList.add("vimeo-enhance-fullscreen");
 
@@ -155,7 +133,6 @@ function setIframeAttributesAndAddButton(iframe) {
 	wrapper.addEventListener("mouseenter", showButton, { capture: true });
 	wrapper.addEventListener("mouseleave", hideButton);
 	wrapper.addEventListener("touchstart", showButton, { capture: true });
-	addVimeoPlayerToFullscreenDiv(fullscreenUrl.toString(), () => {});
 }
 
 // Shadow DOM 내부 iframe 처리
@@ -208,7 +185,7 @@ function handleMediaItem(item) {
 document.addEventListener("fullscreenchange", () => {
 	const isFullscreen = !!document.fullscreenElement;
 	if (!isFullscreen) {
-		hideAllVimeoPlayerInFullscreenDiv();
+		removeVimeoPlayerFromFullscreenDiv();
 	}
 });
 
@@ -275,15 +252,6 @@ function addVimeoPlayerToFullscreenDiv(src) {
 	const div = getFullscreenDiv();
 	if (!div) return;
 	const id = getVimeoIdFromSrc(src);
-	if (document.getElementById(id)) {
-		vimeoPlayers.forEach(({ player, iframe }, i) => {
-			if (iframe.id === id) {
-				player.destroy();
-				vimeoPlayers.splice(i, 1);
-			}
-		});
-		document.getElementById(id)?.remove();
-	}
 	const iframe = document.createElement("iframe");
 	iframe.id = id;
 	iframe.src = src;
@@ -294,35 +262,21 @@ function addVimeoPlayerToFullscreenDiv(src) {
 	iframe.height = "100%";
 	iframe.frameBorder = "0";
 	iframe.style.pointerEvents = "auto";
-	iframe.style.visibility = "hidden";
+	iframe.style.visibility = "visible";
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
 	div.appendChild(iframe);
 	const player = new Vimeo.Player(iframe);
-	vimeoPlayers.push({ player, iframe });
+	return { player, iframe };
 }
 
-function hideAllVimeoPlayerInFullscreenDiv() {
+function removeVimeoPlayerFromFullscreenDiv() {
 	const div = getFullscreenDiv();
 	if (!div) return;
 	const iframes = div.querySelectorAll("iframe");
 	for (const iframe of iframes) {
-		iframe.style.visibility = "hidden";
-	}
-	for (const { player } of vimeoPlayers) {
-		player.pause();
+		iframe.remove();
 	}
 }
-
-function showVimeoPlayerInFullscreenDiv(id) {
-	const div = getFullscreenDiv();
-	if (!div) return;
-	const iframe = document.getElementById(id);
-	if (iframe) {
-		iframe.style.visibility = "visible";
-	}
-}
-
-const vimeoPlayers = [];
 
 function isIOS() {
 	return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -332,7 +286,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v4.1");
+		console.log("v5.0");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
