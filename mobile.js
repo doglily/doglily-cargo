@@ -86,9 +86,8 @@ function setIframeAttributesAndAddButton(iframe) {
 			const { player } = addVimeoPlayerToFullscreenDiv(src);
 			const paused = await player.getPaused();
 			console.log(`play 시작`);
+			console.log(`paused:`, paused);
 			if (paused) await player.play();
-			console.log(`setCurrentTime 시작`);
-			await player.setCurrentTime(0);
 			console.log(`setVolume 시작`);
 			await player.setVolume(0.75);
 			console.log(`requestFullscreen 시작`);
@@ -283,7 +282,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.2");
+		console.log("v5.3");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
