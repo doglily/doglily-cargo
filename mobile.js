@@ -262,7 +262,6 @@ function addVimeoPlayerToFullscreenDiv(src) {
 	iframe.height = "100%";
 	iframe.frameBorder = "0";
 	iframe.style.pointerEvents = "auto";
-	iframe.style.visibility = "hidden";
 	if (isIOS()) {
 		iframe.style.visibility = "hidden";
 	} else {
@@ -291,7 +290,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.5");
+		console.log("v5.6");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
