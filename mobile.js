@@ -76,8 +76,21 @@ function createFullscreenButton() {
 
 let scrollTop = 0;
 
+function waitForIframeLoad(iframe) {
+	return new Promise((resolve) => {
+		if (
+			iframe.contentDocument &&
+			iframe.contentDocument.readyState === "complete"
+		) {
+			resolve();
+		} else {
+			iframe.addEventListener("load", resolve, { once: true });
+		}
+	});
+}
+
 // iframe에 버튼 붙이기
-function setIframeAttributesAndAddButton(iframe) {
+async function setIframeAttributesAndAddButton(iframe) {
 	const src = iframe.getAttribute("src");
 	if (!src?.startsWith("https://player.vimeo.com")) return;
 
@@ -86,7 +99,7 @@ function setIframeAttributesAndAddButton(iframe) {
 	url.searchParams.set("autoplay", "0");
 	iframe.setAttribute("src", url.toString());
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
-
+	await waitForIframeLoad(iframe);
 	const wrapper = iframe.parentElement?.parentElement;
 	if (!wrapper) return;
 
@@ -330,7 +343,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.21");
+		console.log("v5.22");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
