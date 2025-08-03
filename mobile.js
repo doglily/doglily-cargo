@@ -89,101 +89,98 @@ async function waitForIframeSrc(iframe, maxTries = 2000, interval = 100) {
 
 // iframe에 버튼 붙이기
 async function setIframeAttributesAndAddButton(iframe) {
+	iframe.style.display = "block";
 	const src = await waitForIframeSrc(iframe);
 	if (!src?.startsWith("https://player.vimeo.com")) return;
+	const url = new URL(src);
+	url.searchParams.set("controls", "0");
+	url.searchParams.set("autoplay", "0");
 
-	iframe.onload = () => {
-		iframe.onload = null;
-		const url = new URL(src);
-		url.searchParams.set("controls", "0");
-		url.searchParams.set("autoplay", "0");
-		iframe.setAttribute("src", url.toString());
-		iframe.allow = "autoplay; fullscreen; picture-in-picture";
+	iframe.setAttribute("src", url.toString());
+	iframe.allow = "autoplay; fullscreen; picture-in-picture";
 
-		const wrapper = iframe.parentElement?.parentElement;
-		if (!wrapper) return;
+	const wrapper = iframe.parentElement?.parentElement;
+	if (!wrapper) return;
 
-		const existingBtns = wrapper.querySelectorAll(".vimeo-enhance-fullscreen");
-		existingBtns.forEach((btn) => btn.remove());
+	const existingBtns = wrapper.querySelectorAll(".vimeo-enhance-fullscreen");
+	existingBtns.forEach((btn) => btn.remove());
 
-		const fullscreenBtn = createFullscreenButton();
-		fullscreenBtn.addEventListener("click", async (event) => {
-			iframe.style.display = "block";
-			if (isIOS()) {
-				const player = new Vimeo.Player(iframe);
-				await player.ready();
-				const paused = await player.getPaused();
-				if (paused) await player.play();
-				await player.setVolume(0.75);
-				await player.requestFullscreen();
-				player.on("pause", async () => {
-					await player.setVolume(0);
-				});
-				return;
-			}
-			// 기본 동작 방지 및 스크롤 위치 저장
-			event.preventDefault();
-			event.stopPropagation();
-			scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+	const fullscreenBtn = createFullscreenButton();
+	fullscreenBtn.addEventListener("click", async (event) => {
+		if (isIOS()) {
+			const player = new Vimeo.Player(iframe);
+			await player.ready();
+			const paused = await player.getPaused();
+			if (paused) await player.play();
+			await player.setVolume(0.75);
+			await player.requestFullscreen();
+			player.on("pause", async () => {
+				await player.setVolume(0);
+			});
+			return;
+		}
+		// 기본 동작 방지 및 스크롤 위치 저장
+		event.preventDefault();
+		event.stopPropagation();
+		scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-			try {
-				fullscreenBtn._changeIcon("loading");
-				fullscreenBtn.style.opacity = "1";
-				fullscreenBtn.style.pointerEvents = "auto";
-				setTimeout(() => {
-					fullscreenBtn._changeIcon("enter");
-				}, 3000);
-				const { player, iframe } = addVimeoPlayerToFullscreenDiv(src);
-				await player.ready();
-				const paused = await player.getPaused();
-				console.log(`play 시작`);
-				console.log(`paused:`, paused);
-				if (paused) await player.play();
-				console.log(`setVolume 시작`);
-				await player.setVolume(0.75);
-				console.log(`requestFullscreen 시작`);
-				await player.requestFullscreen();
-				iframe.style.visibility = "visible";
-				iframe.style.opacity = "1";
-				iframe.style.pointerEvents = "auto";
-			} catch (error) {
-				console.error(`에러 발생:`, error);
-			}
-			console.log(`=== 끝 ===`);
-		});
-		fullscreenBtn.classList.add("vimeo-enhance-fullscreen");
-
-		const touchCatcher = document.createElement("div");
-		applyStyles(touchCatcher, {
-			position: "absolute",
-			top: "0",
-			left: "0",
-			right: "0",
-			bottom: "0",
-			background: "transparent",
-			pointerEvents: "auto",
-			opacity: "0",
-			zIndex: "2",
-		});
-		wrapper.appendChild(touchCatcher);
-		wrapper.appendChild(fullscreenBtn);
-
-		let hideTimeout;
-		const showButton = () => {
+		try {
+			fullscreenBtn._changeIcon("loading");
 			fullscreenBtn.style.opacity = "1";
 			fullscreenBtn.style.pointerEvents = "auto";
-			clearTimeout(hideTimeout);
-			hideTimeout = setTimeout(hideButton, 3000);
-		};
-		const hideButton = () => {
-			fullscreenBtn.style.opacity = "0";
-			fullscreenBtn.style.pointerEvents = "none";
-		};
-		wrapper.addEventListener("mousemove", showButton, { capture: true });
-		wrapper.addEventListener("mouseenter", showButton, { capture: true });
-		wrapper.addEventListener("mouseleave", hideButton);
-		wrapper.addEventListener("touchstart", showButton, { capture: true });
+			setTimeout(() => {
+				fullscreenBtn._changeIcon("enter");
+			}, 3000);
+			const { player, iframe } = addVimeoPlayerToFullscreenDiv(src);
+			await player.ready();
+			const paused = await player.getPaused();
+			console.log(`play 시작`);
+			console.log(`paused:`, paused);
+			if (paused) await player.play();
+			console.log(`setVolume 시작`);
+			await player.setVolume(0.75);
+			console.log(`requestFullscreen 시작`);
+			await player.requestFullscreen();
+			iframe.style.visibility = "visible";
+			iframe.style.opacity = "1";
+			iframe.style.pointerEvents = "auto";
+		} catch (error) {
+			console.error(`에러 발생:`, error);
+		}
+		console.log(`=== 끝 ===`);
+	});
+	fullscreenBtn.classList.add("vimeo-enhance-fullscreen");
+
+	const touchCatcher = document.createElement("div");
+	applyStyles(touchCatcher, {
+		position: "absolute",
+		top: "0",
+		left: "0",
+		right: "0",
+		bottom: "0",
+		background: "transparent",
+		pointerEvents: "auto",
+		opacity: "0",
+		zIndex: "2",
+	});
+	wrapper.appendChild(touchCatcher);
+	wrapper.appendChild(fullscreenBtn);
+
+	let hideTimeout;
+	const showButton = () => {
+		fullscreenBtn.style.opacity = "1";
+		fullscreenBtn.style.pointerEvents = "auto";
+		clearTimeout(hideTimeout);
+		hideTimeout = setTimeout(hideButton, 3000);
 	};
+	const hideButton = () => {
+		fullscreenBtn.style.opacity = "0";
+		fullscreenBtn.style.pointerEvents = "none";
+	};
+	wrapper.addEventListener("mousemove", showButton, { capture: true });
+	wrapper.addEventListener("mouseenter", showButton, { capture: true });
+	wrapper.addEventListener("mouseleave", hideButton);
+	wrapper.addEventListener("touchstart", showButton, { capture: true });
 }
 
 // Shadow DOM 내부 iframe 처리
@@ -301,10 +298,9 @@ function addVimeoPlayerToFullscreenDiv(src) {
 	const div = getFullscreenDiv();
 	if (!div) return;
 	const id = getVimeoIdFromSrc(src);
-	const newSrc = `https://player.vimeo.com/video/${id}?quality_selector=1&speed=0&progress_bar=1&fullscreen=1&volume=1`;
 	const iframe = document.createElement("iframe");
 	iframe.id = id;
-	iframe.src = newSrc;
+	iframe.src = src;
 	iframe.style.position = "absolute";
 	iframe.style.top = "0";
 	iframe.style.left = "0";
