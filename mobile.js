@@ -100,6 +100,9 @@ function setIframeAttributesAndAddButton(iframe) {
 	fullscreenBtn.addEventListener("click", async () => {
 		try {
 			fullscreenBtn._changeIcon("loading");
+			setTimeout(() => {
+				fullscreenBtn._changeIcon("enter");
+			}, 3000);
 			const { player, iframe } = addVimeoPlayerToFullscreenDiv(src);
 
 			const paused = await player.getPaused();
