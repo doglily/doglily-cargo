@@ -105,15 +105,15 @@ async function setIframeAttributesAndAddButton(iframe) {
 
 	const fullscreenBtn = createFullscreenButton();
 	fullscreenBtn.addEventListener("click", async (event) => {
-		if (isIOS()) {
-			const { player } = addVimeoPlayerToFullscreenDiv(src);
-			await player.ready();
-			const paused = await player.getPaused();
-			if (paused) await player.play();
-			await player.setVolume(0.75);
-			await player.requestFullscreen();
-			return;
-		}
+		// if (isIOS()) {
+		// 	const { player } = addVimeoPlayerToFullscreenDiv(src);
+		// 	await player.ready();
+		// 	const paused = await player.getPaused();
+		// 	if (paused) await player.play();
+		// 	await player.setVolume(0.75);
+		// 	await player.requestFullscreen();
+		// 	return;
+		// }
 		// 기본 동작 방지 및 스크롤 위치 저장
 		event.preventDefault();
 		event.stopPropagation();
@@ -136,6 +136,7 @@ async function setIframeAttributesAndAddButton(iframe) {
 			await player.setVolume(0.75);
 			console.log(`requestFullscreen 시작`);
 			await player.requestFullscreen();
+			if (isIOS()) return;
 			iframe.style.visibility = "visible";
 			iframe.style.opacity = "1";
 			iframe.style.pointerEvents = "auto";
