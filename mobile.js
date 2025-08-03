@@ -102,8 +102,10 @@ function setIframeAttributesAndAddButton(iframe) {
 	fullscreenBtn.addEventListener("click", async (event) => {
 		if (isIOS()) {
 			const player = new Vimeo.Player(iframe);
-			player.setVolume(0.75);
-			player.requestFullscreen();
+			const paused = await player.getPaused();
+			if (paused) await player.play();
+			await player.setVolume(0.75);
+			await player.requestFullscreen();
 			return;
 		}
 		// 기본 동작 방지 및 스크롤 위치 저장
