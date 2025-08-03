@@ -116,6 +116,8 @@ function setIframeAttributesAndAddButton(iframe) {
 
 		try {
 			fullscreenBtn._changeIcon("loading");
+			fullscreenBtn.style.opacity = "1";
+			fullscreenBtn.style.pointerEvents = "auto";
 			setTimeout(() => {
 				fullscreenBtn._changeIcon("enter");
 			}, 3000);
