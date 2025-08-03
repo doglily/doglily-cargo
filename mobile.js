@@ -61,7 +61,7 @@ function createFullscreenButton() {
 		borderRadius: "4px",
 		padding: "4px",
 		cursor: "pointer",
-		display: "flex",
+		display: "inline-block",
 		alignItems: "center",
 		justifyContent: "center",
 		opacity: "0",
@@ -310,7 +310,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.10");
+		console.log("v5.11");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
