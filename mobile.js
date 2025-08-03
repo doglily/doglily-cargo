@@ -102,12 +102,14 @@ async function waitForIframeSrc(iframe, maxTries = 2000, interval = 100) {
 // iframe에 버튼 붙이기
 async function setIframeAttributesAndAddButton(iframe) {
 	const src = await waitForIframeSrc(iframe);
+	console.log("iframe src:", src);
 	if (!src?.startsWith("https://player.vimeo.com")) return;
 	const url = new URL(src);
 	url.searchParams.set("controls", "0");
 	url.searchParams.set("autoplay", "0");
 	iframe.setAttribute("src", url.toString());
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
+
 	await waitForIframeLoad(iframe);
 	const wrapper = iframe.parentElement?.parentElement;
 	if (!wrapper) return;
