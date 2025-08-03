@@ -112,17 +112,21 @@ function setIframeAttributesAndAddButton(iframe) {
 			}, 3000);
 			const { player, iframe } = addVimeoPlayerToFullscreenDiv(src);
 
-			const paused = await player.getPaused();
-			console.log(`play 시작`);
-			console.log(`paused:`, paused);
-			if (paused) await player.play();
-			console.log(`setVolume 시작`);
-			await player.setVolume(0.75);
-			console.log(`requestFullscreen 시작`);
-			await player.requestFullscreen();
 			if (!isIOS()) {
+				const paused = await player.getPaused();
+				console.log(`play 시작`);
+				console.log(`paused:`, paused);
+				if (paused) await player.play();
+				console.log(`setVolume 시작`);
+				await player.setVolume(0.75);
+				console.log(`requestFullscreen 시작`);
+				await player.requestFullscreen();
 				iframe.style.opacity = "1";
 				iframe.style.pointerEvents = "auto";
+			} else {
+				const paused = player.getPaused();
+				if (paused) player.play();
+				player.requestFullscreen();
 			}
 		} catch (error) {
 			console.error(`에러 발생:`, error);
@@ -319,7 +323,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.13");
+		console.log("v5.14");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
