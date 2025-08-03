@@ -29,7 +29,7 @@ function createFullscreenButton() {
     `)}`;
 
 	const loadingIcon = `data:image/svg+xml;base64,${btoa(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-icon lucide-loader"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-icon lucide-loader"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
     `)}`;
 
 	const iconImg = document.createElement("img");
@@ -41,10 +41,13 @@ function createFullscreenButton() {
 	const changeIcon = (type) => {
 		if (type === "enter") {
 			iconImg.src = enterIcon;
+			iconImg.style.animation = ""; // 애니메이션 제거
 		} else if (type === "exit") {
 			iconImg.src = exitIcon;
+			iconImg.style.animation = ""; // 애니메이션 제거
 		} else if (type === "loading") {
 			iconImg.src = loadingIcon;
+			iconImg.style.animation = "spin 1s linear infinite"; // 회전 애니메이션 추가
 		}
 	};
 
@@ -307,7 +310,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.7");
+		console.log("v5.8");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
