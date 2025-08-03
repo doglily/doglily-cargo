@@ -88,17 +88,16 @@ async function waitForIframeSrc(iframe, maxTries = 2000, interval = 100) {
 }
 
 // iframe에 버튼 붙이기
-async function setIframeAttributesAndAddButton(iframe) {
+async function setIframeAttributesAndAddButtonMac(iframe) {
+	iframe.style.display = "block";
 	const src = await waitForIframeSrc(iframe);
 	if (!src?.startsWith("https://player.vimeo.com")) return;
 
+	const url = new URL(src);
+	url.searchParams.set("controls", "0");
+	url.searchParams.set("autoplay", "0");
 	iframe.onload = () => {
 		iframe.onload = null;
-		const url = new URL(src);
-		url.searchParams.set("controls", "0");
-		url.searchParams.set("autoplay", "0");
-		iframe.setAttribute("src", url.toString());
-		iframe.allow = "autoplay; fullscreen; picture-in-picture";
 
 		const wrapper = iframe.parentElement?.parentElement;
 		if (!wrapper) return;
@@ -108,7 +107,6 @@ async function setIframeAttributesAndAddButton(iframe) {
 
 		const fullscreenBtn = createFullscreenButton();
 		fullscreenBtn.addEventListener("click", async (event) => {
-			iframe.style.display = "block";
 			if (isIOS()) {
 				const player = new Vimeo.Player(iframe);
 				await player.ready();
@@ -184,8 +182,105 @@ async function setIframeAttributesAndAddButton(iframe) {
 		wrapper.addEventListener("mouseleave", hideButton);
 		wrapper.addEventListener("touchstart", showButton, { capture: true });
 	};
+	iframe.setAttribute("src", url.toString());
+	iframe.allow = "autoplay; fullscreen; picture-in-picture";
 }
+async function setIframeAttributesAndAddButtonWin(iframe) {
+	iframe.style.display = "block";
+	const src = await waitForIframeSrc(iframe);
+	if (!src?.startsWith("https://player.vimeo.com")) return;
+	iframe.onload = () => {
+		iframe.onload = null;
+		const url = new URL(src);
+		url.searchParams.set("controls", "0");
+		url.searchParams.set("autoplay", "0");
 
+		const wrapper = iframe.parentElement?.parentElement;
+		if (!wrapper) return;
+
+		const existingBtns = wrapper.querySelectorAll(".vimeo-enhance-fullscreen");
+		existingBtns.forEach((btn) => btn.remove());
+
+		const fullscreenBtn = createFullscreenButton();
+		fullscreenBtn.addEventListener("click", async (event) => {
+			if (isIOS()) {
+				const player = new Vimeo.Player(iframe);
+				await player.ready();
+				const paused = await player.getPaused();
+				if (paused) await player.play();
+				await player.setVolume(0.75);
+				await player.requestFullscreen();
+				player.on("pause", async () => {
+					await player.setVolume(0);
+				});
+				return;
+			}
+			// 기본 동작 방지 및 스크롤 위치 저장
+			event.preventDefault();
+			event.stopPropagation();
+			scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+			try {
+				fullscreenBtn._changeIcon("loading");
+				fullscreenBtn.style.opacity = "1";
+				fullscreenBtn.style.pointerEvents = "auto";
+				setTimeout(() => {
+					fullscreenBtn._changeIcon("enter");
+				}, 3000);
+				const { player, iframe } = addVimeoPlayerToFullscreenDiv(src);
+				await player.ready();
+				const paused = await player.getPaused();
+				console.log(`play 시작`);
+				console.log(`paused:`, paused);
+				if (paused) await player.play();
+				console.log(`setVolume 시작`);
+				await player.setVolume(0.75);
+				console.log(`requestFullscreen 시작`);
+				await player.requestFullscreen();
+				iframe.style.visibility = "visible";
+				iframe.style.opacity = "1";
+				iframe.style.pointerEvents = "auto";
+			} catch (error) {
+				console.error(`에러 발생:`, error);
+			}
+			console.log(`=== 끝 ===`);
+		});
+		fullscreenBtn.classList.add("vimeo-enhance-fullscreen");
+
+		const touchCatcher = document.createElement("div");
+		applyStyles(touchCatcher, {
+			position: "absolute",
+			top: "0",
+			left: "0",
+			right: "0",
+			bottom: "0",
+			background: "transparent",
+			pointerEvents: "auto",
+			opacity: "0",
+			zIndex: "2",
+		});
+		wrapper.appendChild(touchCatcher);
+		wrapper.appendChild(fullscreenBtn);
+
+		let hideTimeout;
+		const showButton = () => {
+			fullscreenBtn.style.opacity = "1";
+			fullscreenBtn.style.pointerEvents = "auto";
+			clearTimeout(hideTimeout);
+			hideTimeout = setTimeout(hideButton, 3000);
+		};
+		const hideButton = () => {
+			fullscreenBtn.style.opacity = "0";
+			fullscreenBtn.style.pointerEvents = "none";
+		};
+		wrapper.addEventListener("mousemove", showButton, { capture: true });
+		wrapper.addEventListener("mouseenter", showButton, { capture: true });
+		wrapper.addEventListener("mouseleave", hideButton);
+		wrapper.addEventListener("touchstart", showButton, { capture: true });
+	};
+	iframe.setAttribute("src", url.toString());
+	iframe.allow = "autoplay; fullscreen; picture-in-picture";
+}
 // Shadow DOM 내부 iframe 처리
 function handleShadowRoot(shadowRoot) {
 	if (!shadowRoot || shadowRoot.__fullscreenHandled) return;
@@ -194,7 +289,11 @@ function handleShadowRoot(shadowRoot) {
 	function scanAndProcessIframes() {
 		const iframes = shadowRoot.querySelectorAll('iframe[id^="vimeo-player"]');
 		for (const iframe of iframes) {
-			setIframeAttributesAndAddButton(iframe);
+			if (isWin()) {
+				setIframeAttributesAndAddButtonWin(iframe);
+			} else {
+				setIframeAttributesAndAddButtonMac(iframe);
+			}
 		}
 	}
 	scanAndProcessIframes();
@@ -202,7 +301,11 @@ function handleShadowRoot(shadowRoot) {
 		for (const { addedNodes } of mutations) {
 			for (const node of addedNodes) {
 				if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
-					setIframeAttributesAndAddButton(node);
+					if (isWin()) {
+						setIframeAttributesAndAddButtonWin(node);
+					} else {
+						setIframeAttributesAndAddButtonMac(node);
+					}
 				}
 			}
 		}
@@ -334,6 +437,28 @@ function removeVimeoPlayerFromFullscreenDiv() {
 
 function isIOS() {
 	return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+function isMac() {
+	const platform = navigator.platform.toLowerCase();
+	if (platform.includes("mac")) {
+		return true;
+	} else if (platform.includes("win")) {
+		return false;
+	} else {
+		return false;
+	}
+}
+
+function isWin() {
+	const platform = navigator.platform.toLowerCase();
+	if (platform.includes("mac")) {
+		return false;
+	} else if (platform.includes("win")) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 (() => {
