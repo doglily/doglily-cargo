@@ -151,12 +151,11 @@ function setIframeAttributesAndAddButton(iframe) {
 		fullscreenBtn.style.opacity = "0";
 		fullscreenBtn.style.pointerEvents = "none";
 	};
-	addVimeoPlayerToFullscreenDiv(fullscreenUrl.toString(), () => {
-		wrapper.addEventListener("mousemove", showButton, { capture: true });
-		wrapper.addEventListener("mouseenter", showButton, { capture: true });
-		wrapper.addEventListener("mouseleave", hideButton);
-		wrapper.addEventListener("touchstart", showButton, { capture: true });
-	});
+	wrapper.addEventListener("mousemove", showButton, { capture: true });
+	wrapper.addEventListener("mouseenter", showButton, { capture: true });
+	wrapper.addEventListener("mouseleave", hideButton);
+	wrapper.addEventListener("touchstart", showButton, { capture: true });
+	addVimeoPlayerToFullscreenDiv(fullscreenUrl.toString(), () => {});
 }
 
 // Shadow DOM 내부 iframe 처리
@@ -272,7 +271,7 @@ function getFullscreenDiv() {
 	return document.getElementById("fullscreen-div");
 }
 
-function addVimeoPlayerToFullscreenDiv(src, onReady) {
+function addVimeoPlayerToFullscreenDiv(src) {
 	const div = getFullscreenDiv();
 	if (!div) return;
 	const id = getVimeoIdFromSrc(src);
@@ -299,9 +298,6 @@ function addVimeoPlayerToFullscreenDiv(src, onReady) {
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
 	div.appendChild(iframe);
 	const player = new Vimeo.Player(iframe);
-	player.on("play", () => {
-		onReady?.();
-	});
 	vimeoPlayers.push({ player, iframe });
 }
 
