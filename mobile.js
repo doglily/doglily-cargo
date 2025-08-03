@@ -97,7 +97,14 @@ function setIframeAttributesAndAddButton(iframe) {
 	if (existingBtn) existingBtn.remove();
 
 	const fullscreenBtn = createFullscreenButton();
-	fullscreenBtn.addEventListener("click", async () => {
+	fullscreenBtn.addEventListener("click", async (event) => {
+		// 기본 동작 방지 및 스크롤 위치 저장
+		event.preventDefault();
+		event.stopPropagation();
+		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		const scrollLeft =
+			window.pageXOffset || document.documentElement.scrollLeft;
+
 		try {
 			fullscreenBtn._changeIcon("loading");
 			setTimeout(() => {
@@ -119,6 +126,11 @@ function setIframeAttributesAndAddButton(iframe) {
 			}
 		} catch (error) {
 			console.error(`에러 발생:`, error);
+		} finally {
+			// 스크롤 위치 복원
+			setTimeout(() => {
+				window.scrollTo(scrollLeft, scrollTop);
+			}, 100);
 		}
 		console.log(`=== 끝 ===`);
 	});
@@ -311,7 +323,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.11");
+		console.log("v5.12");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
