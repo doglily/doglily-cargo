@@ -102,6 +102,7 @@ function setIframeAttributesAndAddButton(iframe) {
 	fullscreenBtn.addEventListener("click", async (event) => {
 		if (isIOS()) {
 			const player = new Vimeo.Player(iframe);
+			vimeoPlayersForIOS.push(player);
 			const paused = await player.getPaused();
 			if (paused) await player.play();
 			await player.setVolume(0.75);
@@ -220,8 +221,16 @@ function handleMediaItem(item) {
 document.addEventListener("fullscreenchange", () => {
 	const isFullscreen = !!document.fullscreenElement;
 	if (!isFullscreen) {
-		removeVimeoPlayerFromFullscreenDiv();
-		window.scrollTo(0, scrollTop);
+		if (isIOS()) {
+			vimeoPlayersForIOS.forEach((player) => {
+				player.setVolume(0);
+				player.destroy();
+			});
+			vimeoPlayersForIOS = [];
+		} else {
+			removeVimeoPlayerFromFullscreenDiv();
+			window.scrollTo(0, scrollTop);
+		}
 	}
 });
 
@@ -326,7 +335,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.15");
+		console.log("v5.16");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
@@ -339,3 +348,5 @@ function isIOS() {
 function getVimeoIdFromSrc(src) {
 	return src.split("/video/")[1].split("?")[0];
 }
+
+let vimeoPlayersForIOS = [];
