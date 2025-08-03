@@ -92,6 +92,7 @@ function waitForIframeLoad(iframe) {
 // iframe에 버튼 붙이기
 async function setIframeAttributesAndAddButton(iframe) {
 	const src = iframe.getAttribute("src");
+	console.log(`src:`, src);
 	if (!src?.startsWith("https://player.vimeo.com")) return;
 
 	const url = new URL(src);
