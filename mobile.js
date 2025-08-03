@@ -97,10 +97,14 @@ function setIframeAttributesAndAddButton(iframe) {
 	fullscreenBtn.addEventListener("click", async (event) => {
 		if (isIOS()) {
 			const player = new Vimeo.Player(iframe);
+			await player.ready();
 			const paused = await player.getPaused();
 			if (paused) await player.play();
 			await player.setVolume(0.75);
 			await player.requestFullscreen();
+			player.on("pause", async () => {
+				await player.setVolume(0);
+			});
 			return;
 		}
 		// 기본 동작 방지 및 스크롤 위치 저장
@@ -116,7 +120,7 @@ function setIframeAttributesAndAddButton(iframe) {
 				fullscreenBtn._changeIcon("enter");
 			}, 3000);
 			const { player, iframe } = addVimeoPlayerToFullscreenDiv(src);
-
+			await player.ready();
 			const paused = await player.getPaused();
 			console.log(`play 시작`);
 			console.log(`paused:`, paused);
@@ -326,7 +330,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.20");
+		console.log("v5.21");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
