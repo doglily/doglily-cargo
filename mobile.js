@@ -102,6 +102,7 @@ function setIframeAttributesAndAddButton(iframe) {
 	fullscreenBtn.addEventListener("click", async (event) => {
 		if (isIOS()) {
 			const player = new Vimeo.Player(iframe);
+			player.setVolume(0.75);
 			player.requestFullscreen();
 			return;
 		}
