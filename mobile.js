@@ -41,13 +41,13 @@ function createFullscreenButton() {
 	const changeIcon = (type) => {
 		if (type === "enter") {
 			iconImg.src = enterIcon;
-			iconImg.style.animation = ""; // 애니메이션 제거
+			iconImg.classList.remove("spinning-icon");
 		} else if (type === "exit") {
 			iconImg.src = exitIcon;
-			iconImg.style.animation = ""; // 애니메이션 제거
+			iconImg.classList.remove("spinning-icon");
 		} else if (type === "loading") {
 			iconImg.src = loadingIcon;
-			iconImg.style.animation = "spin 1s linear infinite"; // 회전 애니메이션 추가
+			iconImg.classList.add("spinning-icon");
 		}
 	};
 
@@ -310,7 +310,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.9");
+		console.log("v5.10");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
@@ -322,17 +322,4 @@ function isIOS() {
 
 function getVimeoIdFromSrc(src) {
 	return src.split("/video/")[1].split("?")[0];
-}
-
-// CSS 키프레임 애니메이션 추가
-if (!document.querySelector("#spin-animation-style")) {
-	const style = document.createElement("style");
-	style.id = "spin-animation-style";
-	style.textContent = `
-		@keyframes spin {
-			from { transform: rotate(0deg); }
-			to { transform: rotate(360deg); }
-		}
-	`;
-	document.head.appendChild(style);
 }
