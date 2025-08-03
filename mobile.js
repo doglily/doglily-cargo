@@ -75,18 +75,40 @@ function createFullscreenButton() {
 }
 
 let scrollTop = 0;
+function waitForIframeLoad(iframe) {
+	return new Promise((resolve) => {
+		if (
+			iframe.contentDocument &&
+			iframe.contentDocument.readyState === "complete"
+		) {
+			resolve();
+		} else {
+			iframe.addEventListener("load", resolve, { once: true });
+		}
+	});
+}
+
+async function waitForIframeSrc(iframe, maxTries = 2000, interval = 100) {
+	for (let i = 0; i < maxTries; i++) {
+		const src = iframe.getAttribute("src");
+		if (typeof src === "string" && src.length > 0) {
+			return src;
+		}
+		await new Promise((res) => setTimeout(res, interval));
+	}
+	return null;
+}
 
 // iframe에 버튼 붙이기
 async function setIframeAttributesAndAddButton(iframe) {
-	const src = iframe.getAttribute("src");
-	console.log("test");
-	console.log("iframe src:", src);
+	const src = await waitForIframeSrc(iframe);
 	if (!src?.startsWith("https://player.vimeo.com")) return;
 	const url = new URL(src);
 	url.searchParams.set("controls", "0");
 	url.searchParams.set("autoplay", "0");
 	iframe.setAttribute("src", url.toString());
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
+	await waitForIframeLoad(iframe);
 	const wrapper = iframe.parentElement?.parentElement;
 	if (!wrapper) return;
 
@@ -175,14 +197,11 @@ async function setIframeAttributesAndAddButton(iframe) {
 function handleShadowRoot(shadowRoot) {
 	if (!shadowRoot || shadowRoot.__fullscreenHandled) return;
 	shadowRoot.__fullscreenHandled = true;
-	const processedIframes = new WeakSet();
+
 	function scanAndProcessIframes() {
 		const iframes = shadowRoot.querySelectorAll('iframe[id^="vimeo-player"]');
 		for (const iframe of iframes) {
-			if (!processedIframes.has(iframe)) {
-				setIframeAttributesAndAddButton(iframe);
-				processedIframes.add(iframe);
-			}
+			setIframeAttributesAndAddButton(iframe);
 		}
 	}
 	scanAndProcessIframes();
@@ -190,10 +209,7 @@ function handleShadowRoot(shadowRoot) {
 		for (const { addedNodes } of mutations) {
 			for (const node of addedNodes) {
 				if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IFRAME") {
-					if (!processedIframes.has(node)) {
-						setIframeAttributesAndAddButton(node);
-						processedIframes.add(node);
-					}
+					setIframeAttributesAndAddButton(node);
 				}
 			}
 		}
