@@ -74,6 +74,8 @@ function createFullscreenButton() {
 	return btn;
 }
 
+let scrollTop = 0;
+
 // iframe에 버튼 붙이기
 function setIframeAttributesAndAddButton(iframe) {
 	const src = iframe.getAttribute("src");
@@ -101,9 +103,7 @@ function setIframeAttributesAndAddButton(iframe) {
 		// 기본 동작 방지 및 스크롤 위치 저장
 		event.preventDefault();
 		event.stopPropagation();
-		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-		const scrollLeft =
-			window.pageXOffset || document.documentElement.scrollLeft;
+		scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
 		try {
 			fullscreenBtn._changeIcon("loading");
@@ -126,11 +126,6 @@ function setIframeAttributesAndAddButton(iframe) {
 			}
 		} catch (error) {
 			console.error(`에러 발생:`, error);
-		} finally {
-			// 스크롤 위치 복원
-			setTimeout(() => {
-				window.scrollTo(scrollLeft, scrollTop);
-			}, 100);
 		}
 		console.log(`=== 끝 ===`);
 	});
@@ -219,6 +214,7 @@ document.addEventListener("fullscreenchange", () => {
 	const isFullscreen = !!document.fullscreenElement;
 	if (!isFullscreen) {
 		removeVimeoPlayerFromFullscreenDiv();
+		window.scrollTo(0, scrollTop);
 	}
 });
 
@@ -323,7 +319,7 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.12");
+		console.log("v5.13");
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
