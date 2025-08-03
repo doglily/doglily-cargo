@@ -8,7 +8,7 @@ function createFullscreenButton() {
 	const btn = document.createElement("button");
 
 	const enterIcon = `data:image/svg+xml;base64,${btoa(`
-        <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
+        <svg xmlns='http://www.w3.org/2000/svg' width='27' height='27' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
             <path d='m15 15 6 6'/>
             <path d='m15 9 6-6'/>
             <path d='M21 16.2V21h-4.8'/>
@@ -20,7 +20,7 @@ function createFullscreenButton() {
         </svg>
     `)}`;
 	const exitIcon = `data:image/svg+xml;base64,${btoa(`
-        <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
+        <svg xmlns='http://www.w3.org/2000/svg' width='27' height='27' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
             <path d='m15 15 6 6m-6-6v4.8m0-4.8h4.8'/>
             <path d='M9 19.8V15m0 0H4.2M9 15l-6 6'/>
             <path d='M15 4.2V9m0 0h4.8M15 9l6-6'/>
@@ -29,7 +29,7 @@ function createFullscreenButton() {
     `)}`;
 
 	const loadingIcon = `data:image/svg+xml;base64,${btoa(`
-     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hourglass-icon lucide-hourglass"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
+     <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hourglass-icon lucide-hourglass"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
     `)}`;
 
 	const iconImg = document.createElement("img");
@@ -54,9 +54,9 @@ function createFullscreenButton() {
 		position: "absolute",
 		bottom: "10px",
 		right: "10px",
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
+		backgroundColor: "rgba(0, 0, 0, 0.4)",
 		borderRadius: "4px",
-		padding: "4px",
+		padding: "7px",
 		cursor: "pointer",
 		display: "flex",
 		alignItems: "center",
