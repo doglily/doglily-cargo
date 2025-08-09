@@ -307,8 +307,9 @@ function addVimeoPlayerToFullscreenDiv(src) {
 	if (!div) return;
 	const id = getVimeoIdFromSrc(src);
 	const iframe = document.createElement("iframe");
+	const newSrc = `https://player.vimeo.com/video/${id}?quality_selector=1&speed=0&progress_bar=1&fullscreen=1&volume=1`;
 	iframe.id = id;
-	iframe.src = src;
+	iframe.src = newSrc;
 	iframe.style.position = "absolute";
 	iframe.style.top = "0";
 	iframe.style.left = "0";
