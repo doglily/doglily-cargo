@@ -194,13 +194,11 @@ async function setIframeAttributesAndAddButton(iframe) {
 
 // Shadow DOM 내부 iframe 처리
 function handleShadowRoot(shadowRoot) {
-	if (!shadowRoot || shadowRoot.__fullscreenHandled) return;
-	shadowRoot.__fullscreenHandled = true;
+	if (!shadowRoot) return;
 
 	function scanAndProcessIframes() {
-		const iframes = shadowRoot.querySelectorAll('iframe[id^="vimeo-player"]');
+		const iframes = shadowRoot.querySelectorAll("iframe");
 		for (const iframe of iframes) {
-			iframe.style.display = "none";
 			setIframeAttributesAndAddButton(iframe);
 		}
 	}
