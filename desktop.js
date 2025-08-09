@@ -79,7 +79,7 @@ function createFullscreenButton() {
 
 let scrollTop = 0;
 
-async function waitForIframeSrc(iframe, maxTries = 2000, interval = 350) {
+async function waitForIframeSrc(iframe, maxTries = 2000, interval = 100) {
 	for (let i = 0; i < maxTries; i++) {
 		const src = iframe.getAttribute("src");
 		if (typeof src === "string" && src.length > 0) {
@@ -180,8 +180,7 @@ async function setIframeAttributesAndAddButton(iframe) {
 
 // Shadow DOM 내부 iframe 처리
 function handleShadowRoot(shadowRoot) {
-	if (!shadowRoot || shadowRoot.__fullscreenHandled) return;
-	shadowRoot.__fullscreenHandled = true;
+	if (!shadowRoot) return;
 
 	function scanAndProcessIframes() {
 		const iframes = shadowRoot.querySelectorAll('iframe[id^="vimeo-player"]');
