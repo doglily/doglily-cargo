@@ -99,18 +99,20 @@ async function setIframeAttributesAndAddButton(iframe) {
 	iframe.setAttribute("src", url.toString());
 	iframe.allow = "autoplay; fullscreen; picture-in-picture";
 
-	iframe.onload = () => {
+	iframe.onload = async () => {
 		iframe.onload = null;
+
 		const wrapper = iframe.parentElement?.parentElement;
 		if (!wrapper) return;
 
 		const existingBtns = wrapper.querySelectorAll(".vimeo-enhance-fullscreen");
 		existingBtns.forEach((btn) => btn.remove());
+		const player = new Vimeo.Player(iframe);
+		await player.ready();
 
 		const fullscreenBtn = createFullscreenButton();
 		fullscreenBtn.addEventListener("click", async (event) => {
 			if (isIOS()) {
-				const player = new Vimeo.Player(iframe);
 				await player.ready();
 				const paused = await player.getPaused();
 				if (paused) await player.play();
@@ -118,6 +120,8 @@ async function setIframeAttributesAndAddButton(iframe) {
 				await player.requestFullscreen();
 				player.on("pause", async () => {
 					await player.setVolume(0);
+					const paused = await player.getPaused();
+					if (paused) await player.play();
 				});
 				return;
 			}
@@ -183,6 +187,8 @@ async function setIframeAttributesAndAddButton(iframe) {
 		wrapper.addEventListener("mouseenter", showButton, { capture: true });
 		wrapper.addEventListener("mouseleave", hideButton);
 		wrapper.addEventListener("touchstart", showButton, { capture: true });
+
+		iframe.style.display = "block";
 	};
 }
 
@@ -194,6 +200,7 @@ function handleShadowRoot(shadowRoot) {
 	function scanAndProcessIframes() {
 		const iframes = shadowRoot.querySelectorAll('iframe[id^="vimeo-player"]');
 		for (const iframe of iframes) {
+			iframe.style.display = "none";
 			setIframeAttributesAndAddButton(iframe);
 		}
 	}
