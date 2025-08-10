@@ -196,13 +196,6 @@ async function setIframeAttributesAndAddButton(iframe) {
 function handleShadowRoot(shadowRoot) {
 	if (!shadowRoot) return;
 
-	function scanAndProcessIframes() {
-		const iframes = shadowRoot.querySelectorAll("iframe");
-		for (const iframe of iframes) {
-			setIframeAttributesAndAddButton(iframe);
-		}
-	}
-	scanAndProcessIframes();
 	const observer = new MutationObserver((mutations) => {
 		for (const { addedNodes } of mutations) {
 			for (const node of addedNodes) {
@@ -345,7 +338,29 @@ function isIOS() {
 	function init() {
 		addFullscreenDiv();
 		observeStackedPageContainers();
-		console.log("v5.22");
+
+		const observer = new MutationObserver(() => {
+			const a = document.querySelector("#empty1-–-do-not-delete");
+			const a2 = document.querySelector("#empty2-–-do-not-delete");
+			const a3 = document.querySelector("#empty3-–-do-not-delete");
+
+			if (a && a2 && a3) {
+				setTimeout(() => {
+					const div = a.parentElement;
+					const div2 = a2.parentElement;
+					const div3 = a3.parentElement;
+					div.style.display = "none";
+					div.style.pointerEvents = "none";
+					div2.style.display = "none";
+					div2.style.pointerEvents = "none";
+					div3.style.display = "none";
+					div3.style.pointerEvents = "none";
+				}, 1000);
+				observer.disconnect(); // 작업 끝나면 감시 중단
+			}
+		});
+
+		observer.observe(document.body, { childList: true, subtree: true });
 	}
 	// DOMContentLoaded가 이미 끝났으면 바로 실행
 	if (document.readyState === "loading") {
